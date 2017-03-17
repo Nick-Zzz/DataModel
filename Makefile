@@ -37,17 +37,24 @@ obj-y += src/
 all : 
 	make -C ./ -f $(TOPDIR)/Makefile.build
 	$(CC) -o $(TARGET) -shared -fPIC built-in.o $(LDFLAGS)
-	cp etc_config/* /etc/config/ -rf
-	cp device.so /usr/lib/ -rf
+	make -C  ./uci-0.1/
 
+#######install your path##################
+install:
+	cp etc_config/* /etc/config/ -rf
+	cp device.so /usr/lib/
+	cp ./uci-0.1/libuci.so /usr/lib/ 
+	cp ./uci-0.1/uci /usr/bin/
 .PHONY: clean
 clean:
 	rm -f $(shell find -name "*.o")
 	rm -f $(TARGET)
-
+	make clean -C ./uci-0.1/
+	
 .PHONY: distclean
 distclean:
 	rm -f $(shell find -name "*.o")
 	rm -f $(shell find -name "*.d")
 	rm -f $(TARGET)
+	make clean -C ./uci-0.1/
 	
