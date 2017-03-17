@@ -19,7 +19,8 @@ CFLAGS += -D__USE_XOPEN  -D_GNU_SOURCE
 
 CFLAGS += -I $(shell pwd)/include
 
-LDFLAGS := -luci -lcurl -leboxresolv
+#LDFLAGS := -luci -lcurl -leboxresolv
+LDFLAGS := -luci -lcurl 
 
 export CFLAGS LDFLAGS
 

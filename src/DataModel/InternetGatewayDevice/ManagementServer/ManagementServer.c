@@ -9,6 +9,7 @@
 
 #include "device.h"
 #include "cpeutil.h"
+#include "log.h"
 
 int CpeGetManagementServerConnectionRequestURL(void *arg, char ** value)
 {

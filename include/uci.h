@@ -282,6 +282,7 @@ extern int uci_parse_argument(struct uci_context *ctx, FILE *stream, char **str,
  */
 extern int uci_set_backend(struct uci_context *ctx, const char *name);
 
+extern void uci_free_content(struct uci_context *ctx);
 /* UCI data structures */
 enum uci_type {
 	UCI_TYPE_HISTORY = 0,

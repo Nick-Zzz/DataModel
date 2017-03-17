@@ -28,6 +28,7 @@ int dev_upload(void *data1, void *data2);
 void closeinout();
 BOOL isIpStr(const char *str);
 trf_param_t *dev_get_param_by_name(trf_param_t *param, const char *name);
+void handle_namechange(callback_reg_func_t func);
 
 #endif
 

@@ -6,6 +6,7 @@
 #include "log.h"
 #include "cpeutil.h"
 #include "device.h"
+#include "low_level_func.h"
 
 int TRF_Refresh_WANIPorPPPConnection(void *arg, trf_param_t *param, callback_reg_func_t func, LogFunc log_func)
 {
@@ -147,8 +148,6 @@ int TRF_Refresh_WANIPorPPPConnection(void *arg, trf_param_t *param, callback_reg
 
 int TRF_Add_WANIPorPPPConnection(trf_param_t *param, void *arg, int *pinstance_num, callback_reg_func_t func, LogFunc log_func)
 {
-    trf_param_t     *param_tmp = NULL;
-    trf_param_t     *param_tmp2 = NULL;
     char            pNum[6] = {0};
     char            pNum1[6] = {0};
     int             num;
@@ -289,8 +288,6 @@ int TRF_Add_WANIPorPPPConnection(trf_param_t *param, void *arg, int *pinstance_n
 
 int TRF_Del_WANIPorPPPConnection(trf_param_t *param, void *arg, int instance_num, callback_reg_func_t func, LogFunc log_func)
 {
-    trf_param_t     *param_tmp = NULL;
-    trf_param_t     *param_tmp2 = NULL;
     char            pNum[6] = {0};
     char            pNum1[6] = {0};
     char          re_cmd[512]   = {0};

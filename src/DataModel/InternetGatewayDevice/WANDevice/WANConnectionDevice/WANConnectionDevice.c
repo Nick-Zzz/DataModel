@@ -6,6 +6,7 @@
 #include "log.h"
 #include "cpeutil.h"
 #include "device.h"
+#include "low_level_func.h"
 
 void get_bindtype(char *pbindtype, const char *pval, char **keys)
 {
@@ -133,7 +134,6 @@ void set_subwan_name(int index, const char *pbindvalue)
 
 int TRF_Refresh_WANConnection(void *arg, trf_param_t *param, callback_reg_func_t func)
 {
-    char            *value      = NULL;
     char            *pmode      = NULL;
     char            buf[6]      = {0};
     char            pNum[6]     = {0};
@@ -235,9 +235,6 @@ int TRF_Refresh_WANConnection(void *arg, trf_param_t *param, callback_reg_func_t
 int TRF_Add_WANConnection(trf_param_t *param, void *arg, int *pinstance_num, callback_reg_func_t func, LogFunc log_func)
 {
     char  buf[6]         = {0};
-    char  pIfName[8]     = {0};
-    char  package[128]   = {0};
-    char  section[128]   = {0};
     char  cmd[2048]      = {0};
     int   i              = 0;
     trf_param_t  *param_tmp = NULL; 
@@ -283,7 +280,7 @@ int TRF_Add_WANConnection(trf_param_t *param, void *arg, int *pinstance_num, cal
         "uci set swanif.swan%d.showenable='1'; "
         "uci set swanif.swan%d.displayname='Other'; "
         "uci set swanif.swan%d.version='v4'; "
-        "uci commit", i, i, i, 0, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i);
+        "uci commit", i, i, i, 0, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i);
     
     device_info("cmd is %s\n", cmd);
     mysystem(cmd);
@@ -304,16 +301,10 @@ int TRF_Add_WANConnection(trf_param_t *param, void *arg, int *pinstance_num, cal
 
 int TRF_Del_WANConnection(trf_param_t *param, void *arg, int instance_num, callback_reg_func_t func, LogFunc log_func)
 {
-    char          *str_id       = NULL;
-    char          pIfName[8]    = {0};
-    char          package[128]  = {0};
-    char          section[128]  = {0};
-    char          re_cmd[512]   = {0};
     char          cmd[2048]     = {0};
     int           i             = 0;
     trf_param_t   *param_tmp    = NULL;
     trf_param_t   *param_parent = NULL;
-    char            *pVal = NULL;
     
 	if(!param || !param->parent)
     {

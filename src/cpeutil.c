@@ -212,7 +212,6 @@ int cpe_uci_set(char * tag, const char * value)
     char arg2[256*20];
     int ret;
     struct uci_context *ctx;
-    char buffer[256];
 
     if (!tag || (strlen(tag) > 128))
     {
@@ -247,7 +246,6 @@ int cpe_uci_del(char * tag)
     char arg[256];
     int ret;
     struct uci_context *ctx;
-    char buffer[256];
 
     if (!tag || (strlen(tag) > 128))
     {
@@ -417,7 +415,7 @@ int uci_do_section_cmd(struct uci_context *ctx, int cmd, char * tag, char * buff
 
             if (NULL == (fp = fopen(package, "a")))
             {
-                log_error("fopen error, %s\n", package);
+                device_error("fopen error, %s\n", package);
                 return -1;
             }
 
@@ -437,7 +435,7 @@ int uci_do_section_cmd(struct uci_context *ctx, int cmd, char * tag, char * buff
 
     if (!p)
     {
-        //log_error("package is NULL, %s\n", package);
+        //device_error("package is NULL, %s\n", package);
         return 1;
     }
         
@@ -446,7 +444,7 @@ int uci_do_section_cmd(struct uci_context *ctx, int cmd, char * tag, char * buff
     case CMD_GET:
         if (uci_lookup(ctx, &e, p, section, option) != UCI_OK)
         {
-            //log_error("uci_lookup error, %s\n", package);
+            //device_error("uci_lookup error, %s\n", package);
             return 1;
         }
         
@@ -1107,14 +1105,14 @@ int CpeGetWanPrefix(void * arg, char * package, char * section)
 
     if (GetNumAfterString(arg, pNum, "WANDevice.") == FALSE)
     {
-        log_error("GetNumAfterString fail, arg=%s\n", arg);
+        device_error("GetNumAfterString fail, arg=%s\n", arg);
         return FAULT_CPE_9005;
     }
     wandevicenum = atoi(pNum);
     
     if (GetNumAfterString(arg, pNum, "WANConnectionDevice.") == FALSE)
     {
-        log_error("GetNumAfterString fail, arg=%s\n", arg);
+        device_error("GetNumAfterString fail, arg=%s\n", arg);
         return FAULT_CPE_9005;
     }
     wancnndevicenum = atoi(pNum);

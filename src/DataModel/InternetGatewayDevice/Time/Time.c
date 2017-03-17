@@ -20,9 +20,7 @@ int CpeGetTimeNTPServer1(void *arg, char ** value)
 
 int CpeSetTimeNTPServer1(void * arg, const char * value, callback_reg_func_t func)
 {
-    int ret = 0;
-    ret = CpeSetValue(arg, value, "ntpclient.ntpserver1.hostname");
-    return 0;
+    return CpeSetValue(arg, value, "ntpclient.ntpserver1.hostname");
 }
 
 int CpeGetTimeCurrentLocalTime(void *arg, char ** value)

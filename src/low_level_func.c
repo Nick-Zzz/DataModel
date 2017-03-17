@@ -22,7 +22,8 @@ freely or add  implement to complete.
 #include <curl/curl.h>
 #include <syslog.h>
 #include <sys/un.h>
-
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -88,8 +89,6 @@ void closeinout()
 //用于需要平台一开始初始化
 void dev_init(trf_param_t* param, callback_reg_func_t func, pthread_mutex_t *pmutex_param, LogFunc log_func)
 {
-    pthread_t       thd;
-
     //init local log pointer
     cwmplog_func = log_func;
 
@@ -291,7 +290,7 @@ int dev_download(void *data1, void *data2)
     curl_easy_setopt(curl, CURLOPT_USERNAME, arg->username);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, arg->password);
     curl_easy_setopt(curl, CURLOPT_URL,arg->url);
-    if(arg->srcip && isIpstr(arg->srcip))
+    if(arg->srcip && isIpStr(arg->srcip))
         curl_easy_setopt(curl, CURLOPT_INTERFACE, arg->srcip);
     // support download ca
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2);
@@ -425,14 +424,12 @@ int dev_upload(void *data1, void *data2)
 {
     upload_arg_t    *arg = NULL;
     char            *filename = NULL;
-    char            cmd[256] = {0};
     struct timeval  tv;
     CURLcode        code;
     CURL            *curl = NULL;
     struct stat     f_stat;
     FILE            *fp = NULL;
     int             ret = FAULT_CPE_0;
-    char            usr_pwd[256] = {0};
     struct curl_slist   *http_headers = NULL;
 
     device_info("call upload\n");
@@ -507,7 +504,7 @@ int dev_upload(void *data1, void *data2)
     curl_formadd(&post, &last, CURLFORM_COPYNAME, "submit", CURLFORM_COPYCONTENTS, "OK", CURLFORM_END);
 
     curl_easy_setopt(curl, CURLOPT_HEADER, 0);
-    if(arg->srcip && isIpstr(arg->srcip))
+    if(arg->srcip && isIpStr(arg->srcip))
     {
         curl_easy_setopt(curl, CURLOPT_INTERFACE, arg->srcip);
     }
@@ -585,7 +582,7 @@ int dev_url_dns_resolve(const char *url, char *src_ip, char **new_url)
     char domain[128] = {0};
     char domain_ip[IPV4_ADDRESS_LEN] = {0};
     char *newurl = NULL;
-    // char *dns_paramname = NULL;
+    char *dns_param_name = NULL;
     struct hostent * phostent = NULL;
     unsigned int mark = 108;
 
@@ -662,9 +659,29 @@ resove_fail:
         ret = FALSE;
     }
     
-     if(src_ip != NULL)
+    // 把WAN IP  传递给协议栈，用于download或者upload的方法
+    if(src_ip != NULL)
     {
-         // 将download或者upload的srcIP赋给src_ip指针变量,再传递给协议栈
+         char    *srcIP = NULL;
+         //get TR069 binding WAN IP for src IP
+         dev_get_wanparam_name(&dns_param_name);
+         if(dns_param_name)
+         {
+             if(strstr(dns_param_name, "WANIPConnection"))
+             {
+                 CpeGetWANIPConnection_ExternalIPAddress(dns_param_name, &srcIP, NULL);
+             }
+             else
+             {
+                 //CpeGetWANPPPConnection_ExternalIPAddress(dns_paramname, &srcIP, NULL);
+             }
+         
+             if(srcIP)
+             {
+                 strncpy(src_ip, srcIP, IPV4_ADDRESS_LEN-1);
+                 device_info("binding src IP=%s\n", srcIP);
+             }
+         }
     }
 
     return ret;
@@ -792,36 +809,7 @@ BOOL CpeGetValidExternIP(int *pNum, char *pExternIP, char *pProto, char *pDesp)
     char    *pVal = NULL;
     char    * wanMode = NULL;
     BOOL    ret = FALSE;
-    int     i;
     char    path[UCI_PATH_LEN] = {0};
-    char    wanName[16] = {0};
-    int     index;
-                 
-    #if 0
-    if ((CpeGetValue(NULL, &pVal, "cpeagent.cpe.debugtest") == FAULT_CPE_0) && (OTXMLStrcasecmp(pVal, "1") == 0))
-    {
-        if (pVal)
-        {
-            OTXMLFree(pVal);
-            pVal = NULL;
-        }
-        if (CpeGetValue(NULL, &pVal, "cpeagent.cpe.debugip") == FAULT_CPE_0)
-        {
-            if (pExternIP)
-            {
-                strcpy(pExternIP, pVal);
-            }
-        }
-
-        if (pVal)
-        {
-            OTXMLFree(pVal);
-            pVal = NULL;
-        }               
-        ret = TRUE;
-    }
-
-    #endif
     
     if (CpeGetValue(NULL, &wanMode, "wanmode.wanmode.type") == FAULT_CPE_0)
     {
@@ -915,8 +903,6 @@ int dev_get_wanparam_name(char **pwan_path)
 void handle_namechange(callback_reg_func_t func)
 {
     inform_add_t    *pinfo_add = NULL;
-    int             bindtype = 0;
-
     pinfo_add = (inform_add_t*)malloc_check(sizeof(inform_add_t));
     if(!pinfo_add)
     {
