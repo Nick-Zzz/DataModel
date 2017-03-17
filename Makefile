@@ -14,8 +14,8 @@ export AS LD CC CPP AR NM
 export STRIP OBJCOPY OBJDUMP
 
 # we are on ubuntu12.04 and use gcc version is  4.6.3
-CFLAGS := -Werror -O2 -g -MT
-CFLAGS += -D__USE_XOPEN  -D_GNU_SOURCE 
+CFLAGS := -Werror -O2 -g -D_GNU_SOURCE
+#CFLAGS += -D__USE_XOPEN  -D_GNU_SOURCE 
 
 CFLAGS += -I $(shell pwd)/include
 

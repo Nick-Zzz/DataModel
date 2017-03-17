@@ -41,6 +41,6 @@ built-in.o : $(cur_objs) $(subdir_objs)
 dep_file = .$@.d
 
 %.o : %.c
-	$(CC) $(CFLAGS) -MD -MP -MF $(dep_file) -c -fPIC -o $@ $<
-	
+	$(CC) $(CFLAGS) -Wp,-MD,$(dep_file) -c -o $@ $<
+
 .PHONY : $(PHONY)
