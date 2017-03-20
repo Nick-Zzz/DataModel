@@ -46,6 +46,11 @@ device_install:
 	#######4. install device library and config  for tr069 running test ##################
 	cp etc_config/* /etc/config/ -rf
 	cp device.so /usr/lib/
+cwmp_install:
+	#######5. install cwmp core ##################
+	cp cwmp_x86/cwmp /usr/bin/ -rf
+	cp tr069.sh /sbin/tr069 -rf
+
 .PHONY: clean
 clean:
 	rm -f $(shell find -name "*.o")
@@ -67,4 +72,5 @@ distclean:
 	##########3. remove device install #################
 	rm -rf /etc/config/*
 	rm -rf /usr/lib/device.so	
-	
+	##########4. remove cwmp core install #################
+	rm -rf /usr/bin/cwmp
