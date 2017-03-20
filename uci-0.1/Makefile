@@ -5,7 +5,17 @@ PLUGIN_SUPPORT=1
 DEBUG=0
 DEBUG_TYPECAST=0
 
-include Makefile.inc
+include ../Makefile.inc
+
+
+ifeq ($(DEBUG),1)
+  COPTS = -O0
+  CFLAGS += -g3
+endif
+OS=$(shell uname)
+LINK=$(CC)
+SHLIB_EXT=so
+SHLIB_FLAGS=-shared -Wl,-soname,$(SHLIB_FILE)
 
 LIBS=-lc
 SHLIB_FILE=libuci.$(SHLIB_EXT).$(VERSION)
@@ -51,12 +61,6 @@ libuci.$(SHLIB_EXT): libuci-shared.o
 
 clean:
 	rm -f uci uci-static *.[oa] *.so* *.dylib* uci_config.h
-
-install: all
-	$(INSTALL) -m0644 libuci.a $(DESTDIR)$(prefix)/lib/
-	$(INSTALL) -m0755 $(SHLIB_FILE) $(DESTDIR)$(prefix)/lib/
-	ln -sf $(SHLIB_FILE) $(DESTDIR)$(prefix)/lib/libuci.$(SHLIB_EXT)
-	$(INSTALL) -m0755 uci $(DESTDIR)/usr/bin/
 
 FORCE: ;
 .PHONY: FORCE

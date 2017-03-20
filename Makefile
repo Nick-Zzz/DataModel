@@ -1,27 +1,11 @@
-CROSS_COMPILE = 
-AS		= $(CROSS_COMPILE)as
-LD		= $(CROSS_COMPILE)ld
-CC		= $(CROSS_COMPILE)gcc
-CPP		= $(CC) -E
-AR		= $(CROSS_COMPILE)ar
-NM		= $(CROSS_COMPILE)nm
+include Makefile.inc
 
-STRIP		= $(CROSS_COMPILE)strip
-OBJCOPY		= $(CROSS_COMPILE)objcopy
-OBJDUMP		= $(CROSS_COMPILE)objdump
-
-export AS LD CC CPP AR NM
-export STRIP OBJCOPY OBJDUMP
-
-CFLAGS := -Werror -O2 -g -D_GNU_SOURCE
+#CFLAGS += -D_GNU_SOURCE
 CFLAGS += -I $(shell pwd)/include
 
-LDFLAGS := -luci -lcurl 
+LDFLAGS += -luci -lcurl 
 
 export CFLAGS LDFLAGS
-
-TOPDIR := $(shell pwd)
-export TOPDIR
 
 TARGET := device.so
 
