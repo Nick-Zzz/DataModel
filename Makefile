@@ -13,13 +13,9 @@ OBJDUMP		= $(CROSS_COMPILE)objdump
 export AS LD CC CPP AR NM
 export STRIP OBJCOPY OBJDUMP
 
-# we are on ubuntu12.04 and use gcc version is  4.6.3
 CFLAGS := -Werror -O2 -g -D_GNU_SOURCE
-#CFLAGS += -D__USE_XOPEN  -D_GNU_SOURCE 
-
 CFLAGS += -I $(shell pwd)/include
 
-#LDFLAGS := -luci -lcurl -leboxresolv
 LDFLAGS := -luci -lcurl 
 
 export CFLAGS LDFLAGS
@@ -29,32 +25,46 @@ export TOPDIR
 
 TARGET := device.so
 
-
 obj-y += src/
 
+uci :
+	#############1. make uci.so #####################
+	make -C  $(shell pwd)/uci-0.1/
 
-
-all : 
-	make -C ./ -f $(TOPDIR)/Makefile.build
+uci_install :
+	#############2. install uci library and include and bin files #####################
+	cp $(shell pwd)/uci-0.1/libuci.so.0.1 /usr/lib/libuci.so.0.1
+	ln -sf /usr/lib/libuci.so.0.1 /usr/lib/libuci.so
+	cp $(shell pwd)/uci-0.1/uci.h $(shell pwd)/uci-0.1/uci_config.h $(shell pwd)/uci-0.1/uci_internal.h /usr/include/
+	cp $(shell pwd)/uci-0.1/uci /usr/bin/
+device : 
+	#############3. make device.so #####################
+	make -C $(shell pwd)/ -f $(TOPDIR)/Makefile.build
 	$(CC) -o $(TARGET) -shared -fPIC built-in.o $(LDFLAGS)
-	make -C  ./uci-0.1/
 
-#######install your path##################
-install:
+device_install:
+	#######4. install device library and config  for tr069 running test ##################
 	cp etc_config/* /etc/config/ -rf
 	cp device.so /usr/lib/
-	cp ./uci-0.1/libuci.so /usr/lib/ 
-	cp ./uci-0.1/uci /usr/bin/
 .PHONY: clean
 clean:
 	rm -f $(shell find -name "*.o")
+	rm -f $(shell find -name "*.d")
 	rm -f $(TARGET)
-	make clean -C ./uci-0.1/
+	make clean -C $(shell pwd)/uci-0.1/
 	
 .PHONY: distclean
 distclean:
+	##########1. clear device and uci make #################
 	rm -f $(shell find -name "*.o")
 	rm -f $(shell find -name "*.d")
 	rm -f $(TARGET)
-	make clean -C ./uci-0.1/
+	make clean -C $(shell pwd)/uci-0.1/
+	##########2. remove uci install #################
+	rm -rf /usr/lib/libuci.so.0.1 /usr/lib/libuci.so
+	rm -rf /usr/include/uci_internal.h /usr/include/uci_config.h  /usr/include/uci.h
+	rm -rf /usr/bin/uci
+	##########3. remove device install #################
+	rm -rf /etc/config/*
+	rm -rf /usr/lib/device.so	
 	
