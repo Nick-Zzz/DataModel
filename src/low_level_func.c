@@ -35,7 +35,7 @@ freely or add  implement to complete.
 #include "device.h"
 #include "uci.h"
 #include "log.h"
-#include "eboxresolv.h"
+#include "eboxservice.h"
 
 // for test
 #define CWMP_SOCK "/opt/cwmp.sock"
