@@ -56,7 +56,7 @@ libuci.a: libuci-static.o
 	$(RANLIB) $@
 
 libuci.$(SHLIB_EXT): libuci-shared.o
-	$(LINK) $(SHLIB_FLAGS) -o $(SHLIB_FILE) $^ $(LIBS)
+	$(LINK) $(SHLIB_FLAGS) $(FPIC) -o $(SHLIB_FILE) $^ $(LIBS)
 	ln -sf $(SHLIB_FILE) $@
 
 clean:
