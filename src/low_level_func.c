@@ -108,7 +108,7 @@ void dev_init(trf_param_t* param, callback_reg_func_t func, pthread_mutex_t *pmu
     CpeSetValue(NULL, "0", "cpeagent.tr069.inform_status");
 
     //device.xml 自定义X CT-COM BIND 事件 
-    inform_bind(func);
+    // inform_bind(func);
     return;
 }
 
