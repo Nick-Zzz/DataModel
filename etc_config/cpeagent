@@ -1,6 +1,6 @@
 
 config cpeagent tr069
-	option acsurl 'http://192.168.4.11:9090/ACS-server/ACS'
+	option acsurl 'http://192.168.20.36:80/acs'
 	option cpeport '25100'
 	option cpe_ipaddr '192.168.20.12'
 	option auth '0'

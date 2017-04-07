@@ -156,7 +156,7 @@ int CpeGetManagementServerPeriodicInformInterval(void *arg, char ** value)
 
 int CpeSetManagementServerPeriodicInformInterval(void * arg, const char * value, callback_reg_func_t func)
 {
-    return 0;
+    return CpeSetValue(arg, value, "cpeagent.managementserver.PeriodicInformInterval");
 }
 
 
